@@ -1,0 +1,30 @@
+.bg-home {
+  background-image: url('../public/images/bg-home.jpg');
+  height: 300px; /* Thiết lập chiều cao cho div */
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.blur-backdrop {
+  background-color: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(1px);
+  backdrop-filter: blur(1px);
+  padding: 20px 30px;
+  height: inherit;
+  width: inherit;
+}
+
+.header-button-home {
+  color: white;
+  font-size: 22px;
+}
+
+.header-button-home-select {
+  color: white;
+  font-size: 22px;
+  border: 2px solid white;
+  padding: 5px;
+  border-radius: 5px;
+}
