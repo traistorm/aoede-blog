@@ -51,11 +51,14 @@ export default function Post () {
             >
                 {postData.map((post) => {
                     return (
-                        <Link style={{width: "60%"}} href={"/post/" + post.id} className="flex space-x-3 w-full justify-center hover:bg-gray-700 transition duration-100 ease-in-out">
-                            <img style={{width: "35%", maxHeight: "300px"}} src={post.thumbnailImageUrl} alt="thumbnailAlt" className="h-auto" />
+                        <Link style={{width: "60%"}} href={"/post/" + post.id} className="p-5 flex space-x-3 w-full justify-between hover:bg-gray-200 transition duration-100 ease-in-out">
+                            <img style={{maxHeight: "300px", height: "auto", width: "30%"}} src={post.thumbnailImageUrl} alt="thumbnailAlt" className="h-auto" />
                             <div style={{width: "65%"}} className="flex flex-col justify-start">
-                                <div className="text-white text-2xl hover:text-blue-500 transition duration-200 ease-in-out">{post.title}</div>
-                                <div className="text-gray-300 text-base">{post.description}</div>
+                                {/*
+                                <div
+                                    className="text-black text-2xl hover:text-blue-500 transition duration-200 ease-in-out">{post.title}</div>*/}
+                                <div className="text-black text-2xl">{post.title}</div>
+                                <div className="text-gray-800 text-base">{post.description}</div>
                             </div>
                         </Link>
                     )
