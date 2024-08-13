@@ -4,6 +4,8 @@ import styles from "./default.layout.module.scss";
 import {useRouter} from "next/router";
 import {useEffect, useState} from "react";
 import Link from "next/link";
+import Navbar from "../../components/navbar";
+import Footer from "../../components/footer";
 const cx = classNames.bind(styles)
 
 export default function DefaultLayout({children}) {
@@ -23,20 +25,14 @@ export default function DefaultLayout({children}) {
     const handleChangeSelectedPage = (page) => {
         setSelectedPage(page);
     }
-
+    const settings = [];
     return (
         <>
-            <div className={cx("relative flex justify-center items-center space-x-3", "bg-home")}>
-                <div className={cx("blur-backdrop")}>
-                    <div className="flex justify-center items-center space-x-3">
-                        <Link onClick={(e) => {handleChangeSelectedPage("home")}} className={cx("header-button-home", selectedPage === "home"? "header-button-home-select": "")} href={"/"}>Home</Link>
-                        <Link onClick={(e) => {handleChangeSelectedPage("post")}} className={cx("header-button-home", selectedPage === "post"? "header-button-home-select": "")} href={"/post"}>Posts</Link>
-                        <Link onClick={(e) => {handleChangeSelectedPage("community")}} className={cx("header-button-home", selectedPage === "community"? "header-button-home-select": "")} href={"/community"}>Community</Link>
-                    </div>
-                </div>
+            <Navbar {...settings} />
 
-            </div>
             <div>{children}</div>
+
+            <Footer {...settings} />
         </>
     );
 }
