@@ -6,6 +6,7 @@ import Head from "next/head";
 import {createStore} from "redux";
 import {Provider, useDispatch} from "react-redux";
 import store from "../redux/store";
+import {ThemeProvider} from "next-themes";
 
 
 export default function App({ Component, pageProps }) {
@@ -30,8 +31,10 @@ export default function App({ Component, pageProps }) {
     // Use the layout defined at the page level, if available
     const getLayout = Component.getLayout || ((page) => page)
     return (
-        <Provider store={store}>
-            {getLayout(<Component {...pageProps} />)}
-        </Provider>
+        <ThemeProvider attribute="class" defaultTheme="light">
+            <Provider store={store}>
+                {getLayout(<Component {...pageProps} />)}
+            </Provider>
+        </ThemeProvider>
     )
 }

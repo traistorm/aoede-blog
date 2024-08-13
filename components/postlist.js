@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import {cx} from "../utils/all";
-import {parseISO, format} from "date-fns";
 import {PhotoIcon} from "@heroicons/react/24/outline";
 import CategoryLabel from "./category";
 
@@ -49,7 +48,7 @@ export default function PostList({post, aspect, minimal, pathPrefix, preloadImag
                 <div className={cx(minimal && "flex items-center")}>
                     <div>
                         <CategoryLabel
-                            categories={["Tech", "Tutorial"]}
+                            categories={post.categories}
                             nomargin={minimal}
                         />
                         <h2
@@ -67,9 +66,7 @@ export default function PostList({post, aspect, minimal, pathPrefix, preloadImag
                             <Link
                                 href={`/`}
                             >
-                <span
-                    className="bg-gradient-to-r from-green-200 to-green-100 bg-[length:0px_10px] bg-left-bottom
-                      bg-no-repeat
+                <span className="bg-gradient-to-r from-green-200 to-green-100 bg-[length:0px_10px] bg-left-bottom bg-no-repeat
                       transition-[background-size]
                       duration-500
                       hover:bg-[length:100%_3px]
