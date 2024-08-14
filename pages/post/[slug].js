@@ -85,7 +85,11 @@ export default function PostDetail ({}) {
 
             <Container>
                 <article className="mx-auto max-w-screen-md">
-                    <div className="prose mx-auto my-3 dark:prose-invert prose-a:text-blue-600" dangerouslySetInnerHTML={{ __html: post.content }}></div>
+                    {
+                        post?.content && (
+                            <div className="prose mx-auto my-3 dark:prose-invert prose-a:text-blue-600" dangerouslySetInnerHTML={{ __html: post.content }}></div>
+                        )
+                    }
                     <div className="mb-7 mt-7 flex justify-center">
                         <Link
                             href="/"

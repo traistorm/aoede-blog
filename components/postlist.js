@@ -4,14 +4,20 @@ import {cx} from "../utils/all";
 import {PhotoIcon} from "@heroicons/react/24/outline";
 import CategoryLabel from "./category";
 import {formatDatePattern} from "../utils/dateUtils";
+import {useEffect, useState} from "react";
 
 export default function PostList({post, aspect, minimal, pathPrefix, preloadImage, fontSize, fontWeight}) {
+    const [authorShow, setAuthorShow] = useState({});
+    useEffect(() => {
+        if (post) {
+            setAuthorShow(JSON.parse(post.author));
+        }
+    }, [post]);
     return (
         <>
             <div className={cx("group cursor-pointer", minimal && "grid gap-10 md:grid-cols-2")}>
                 <div
-                    className={cx(
-                        " overflow-hidden rounded-md bg-gray-100 transition-all hover:scale-105   dark:bg-gray-800"
+                    className={cx("overflow-hidden rounded-md bg-gray-100 transition-all hover:scale-105 dark:bg-gray-800"
                     )}>
                     <Link
                         className={cx(
@@ -86,7 +92,7 @@ export default function PostList({post, aspect, minimal, pathPrefix, preloadImag
                                 <div className="flex items-center gap-3">
                                     <div className="relative h-5 w-5 flex-shrink-0">
                                         <Image
-                                            src={"https://stablo.web3templates.com/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fcijrdavx%2Fproduction%2F4a21e3f085ed310d00fbbd294eb2392cde7f9acc-3648x3648.jpg%3Fw%3D2000%26auto%3Dformat&w=640&q=75"}
+                                            src={authorShow?.avatarUrl}
                                             alt={post?.createdBy}
                                             className="rounded-full object-cover"
                                             fill
