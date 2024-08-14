@@ -14,21 +14,25 @@ export default function Navbar(props) {
       href: "/"
     },
     {
-      label: "About",
-      href: "/about"
-    },
-    {
-      label: "Contact",
-      href: "/contact"
+      label: "Posts",
+      href: "/post"
     }
   ];
 
   const rightmenu = [
+    /*{
+      label: "About",
+      href: "/about"
+    },*/
     {
-      label: "Archive",
-      href: "/archive"
+      label: "Contact",
+      href: "/contact"
     },
     {
+      label: "Login",
+      href: "/login"
+    },
+    /*{
       label: "Pro Version",
       href: "https://stablo-pro.web3templates.com/",
       external: true,
@@ -38,7 +42,7 @@ export default function Navbar(props) {
       label: "Download",
       href: "https://web3templates.com/templates/stablo-minimal-blog-website-template",
       external: true
-    }
+    }*/
   ];
 
   const mobilemenu = [...leftmenu, ...rightmenu];
@@ -63,7 +67,7 @@ export default function Navbar(props) {
                         <Link
                           href={item.href}
                           key={`${item.label}${index}`}
-                          className="px-5 py-2 text-sm font-medium text-gray-600 hover:text-blue-500 dark:text-gray-400"
+                          className="px-5 py-2 text-base font-medium text-gray-600 hover:text-blue-500 dark:text-gray-400"
                           target={item.external ? "_blank" : ""}
                           rel={item.external ? "noopener" : ""}>
                           {item.label}
@@ -75,7 +79,7 @@ export default function Navbar(props) {
                 <div className="flex w-full items-center justify-between md:w-auto">
                   <Link href="/" className="w-28 dark:hidden">
                     <Image
-                        src="https://stablo.web3templates.com/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fcijrdavx%2Fproduction%2Fe8fa4f57a95067e838d7aa5a4f80042137d9f5b6-132x52.svg%3Fw%3D132%26auto%3Dformat&w=640&q=75"
+                        src="https://i.ibb.co/gFdFwcr/Ao-E-DE-DM-8-14-2024-2.png"
                         alt="Logo"
                         priority={true}
                         width={160}
@@ -85,7 +89,7 @@ export default function Navbar(props) {
                   </Link>
                   <Link href="/" className="hidden w-28 dark:block">
                     <Image
-                        src="https://stablo.web3templates.com/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fcijrdavx%2Fproduction%2Fe8fa4f57a95067e838d7aa5a4f80042137d9f5b6-132x52.svg%3Fw%3D132%26auto%3Dformat&w=640&q=75"
+                        src="https://i.ibb.co/dJqG1hp/Ao-E-DE-DM-8-14-2024-3.png"
                         alt="Logo"
                         priority={true}
                         width={160}
@@ -130,7 +134,7 @@ export default function Navbar(props) {
                         <Link
                           href={item.href}
                           key={`${item.label}${index}`}
-                          className="px-5 py-2 text-sm font-medium text-gray-600 hover:text-blue-500 dark:text-gray-400"
+                          className="px-5 py-2 text-base font-medium text-gray-600 hover:text-blue-500 dark:text-gray-400"
                           target={item.external ? "_blank" : ""}
                           rel={item.external ? "noopener" : ""}>
                           <span> {item.label}</span>

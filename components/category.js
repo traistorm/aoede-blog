@@ -8,7 +8,7 @@ export default function CategoryLabel({categories, nomargin = false}) {
     if (categories) {
       setCategoriesShow(JSON.parse(categories));
     }
-  }, []);
+  }, [categories]);
   return (
     <div className="flex gap-3">
       {categoriesShow?.length &&

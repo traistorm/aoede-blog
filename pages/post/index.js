@@ -1,72 +1,90 @@
-import React, { useEffect, useState } from "react"
-import classNames from "classnames/bind";
-import styles from "./post.module.scss"
-import {getPost} from "../../api/blogs.api";
-import Link from "next/link";
-import GradientCircularProgress from "../../components/loading/GradientCircularProgress";
-import InfiniteScroll from "react-infinite-scroll-component";
-import Head from "next/head";
+import {Suspense, useEffect, useState} from "react";
+import Container from "../../components/container";
+import Loading from "../../components/loading";
+import Pagination from "../../components/pagination";
+import PostList from "../../components/postlist";
+import {getPosts} from "../../api/blogs.api";
 import DefaultLayout from "../../layout/defaultlayout/default.layout";
-const cx = classNames.bind(styles)
-export default function Post () {
-    const [sizePerPage, setSizePerPage] = useState(10)
-    const [hasMorePost, setHasMorePost] = useState(true);
-    const [postPage, setPostPage] = useState(0)
-    const [postData, setPostData] = useState([])
+import About from "../about";
+import { useRouter } from 'next/router'
+
+export const dynamic = "force-dynamic";
+
+export const runtime = "edge";
+
+export default function Post({}) {
+    const router = useRouter()
+
+    const [page, setPage] = useState(0);
+    const [sizePerPage, setSizePerPage] = useState(9);
+    const [posts, setPosts] = useState([]);
+    const [isFirstPage, setIsFirstPage] = useState(true)
+    const [isLastPage, setIsLastPage] = useState(false)
+
     useEffect(() => {
-        getPost(postPage, sizePerPage).then((res) => {
-            setPostData(prevState => [...prevState, ...res.data])
-            if (res.data.length < 10) {
-                // Load 10 post per Call API
-                setHasMorePost(false);
-            }
-        }, (err) => {
+        if (router.query.page) {
+            getPosts(router.query.page, sizePerPage).then((res) => {
+                setPosts(res.data)
+                setPage(parseInt(router.query.page, 10))
 
-        })
-    }, [postPage]);
+                // Check end page
+                setIsFirstPage(router.query.page == 0);
+                setIsLastPage(res.data.length < sizePerPage);
+            }, (err) => {
 
+            })
+        } else {
+            // Get page 0
+            getPosts(0, sizePerPage).then((res) => {
+                setPosts(res.data)
+                setPage(0);
+
+                // Check end page
+                setIsFirstPage(true);
+                setIsLastPage(res.data.length < sizePerPage);
+            }, (err) => {
+
+            })
+        }
+    }, [router.query.page]); // Chỉ chạy khi tham số trang thay đổi
     return (
         <>
-            <Head>
-                <title>Post</title>
-                <link rel="icon" href="/static/traistorm.ico"/>
-            </Head>
-            <InfiniteScroll
-                className="flex flex-col space-y-5 items-center mt-5"
-                dataLength={postData.length}
-                next={(e) => {
-                    setPostPage(prevState => prevState + 1);
-                }}
-                hasMore={hasMorePost}
-                loader={
-                    <div className="flex items-center justify-center p-2">
-                        <GradientCircularProgress size={40} />
-                    </div>
-                }
-                endMessage={
-                    <p className="text-gray-400" style={{ textAlign: 'center' }}>
-                        You have scrolled down to the last post!
+            <Container className="relative">
+                <h1 className="text-center text-3xl font-semibold tracking-tight dark:text-white lg:text-4xl lg:leading-snug">
+                    Archive
+                </h1>
+                <div className="text-center">
+                    <p className="mt-2 text-lg">
+                        See all posts we have ever written.
                     </p>
-                }
-            >
-                {postData.map((post) => {
-                    return (
-                        <Link style={{width: "60%"}} href={"/post/" + post.id} className="p-5 flex space-x-3 w-full justify-between hover:bg-gray-200 transition duration-100 ease-in-out">
-                            <img style={{maxHeight: "300px", height: "auto", width: "30%"}} src={post.thumbnailImageUrl} alt="thumbnailAlt" className="h-auto" />
-                            <div style={{width: "65%"}} className="flex flex-col justify-start">
-                                {/*
-                                <div
-                                    className="text-black text-2xl hover:text-blue-500 transition duration-200 ease-in-out">{post.title}</div>*/}
-                                <div className="text-black text-2xl">{post.title}</div>
-                                <div className="text-gray-800 text-base">{post.description}</div>
+                </div>
+                <Suspense
+                    key={page}
+                    fallback={<Loading />}>
+                    <>
+                        {posts && posts?.length === 0 && (
+                            <div className="flex h-40 items-center justify-center">
+                                <span className="text-lg text-gray-500">
+                                    End of the result!
+                                </span>
                             </div>
-                        </Link>
-                    )
-                })}
-            </InfiniteScroll>
+                        )}
+                        <div className="mt-10 grid gap-10 md:grid-cols-2 lg:gap-10 xl:grid-cols-3">
+                            {posts.map(post => (
+                                <PostList key={post.id} post={post} aspect="square" />
+                            ))}
+                        </div>
+                        <Pagination
+                            page={page}
+                            setPage={setPage}
+                            isFirstPage={isFirstPage}
+                            isLastPage={isLastPage}
+                        />
+                    </>
+                </Suspense>
+            </Container>
         </>
-    )
-
+    );
 }
 
 Post.getLayout = function getLayout(page) {

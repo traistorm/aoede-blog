@@ -29,6 +29,13 @@ module.exports = {
                 "3/2": "3 / 2",
                 "2/3": "2 / 3",
                 "9/16": "9 / 16"
+            },
+            typography: {
+                DEFAULT: {
+                    css: {
+                        maxWidth: '80ch', // add required value here
+                    }
+                }
             }
         }
     },

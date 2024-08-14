@@ -5,7 +5,7 @@ import DefaultLayout from "../layout/defaultlayout/default.layout";
 import Container from "../components/container";
 import Link from "next/link";
 import {useEffect, useState} from "react";
-import {getPost} from "../api/blogs.api";
+import {getPosts} from "../api/blogs.api";
 import PostList from "../components/postlist";
 const cx = classNames.bind(styles)
 
@@ -15,7 +15,7 @@ export default function Home() {
     const [postPage, setPostPage] = useState(0)
     const [posts, setPosts] = useState([])
     useEffect(() => {
-        getPost(postPage, sizePerPage).then((res) => {
+        getPosts(postPage, sizePerPage).then((res) => {
             setPosts(prevState => [...prevState, ...res.data])
             if (res.data.length < 10) {
                 // Load 10 post per Call API
