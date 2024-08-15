@@ -38,11 +38,11 @@ export default function PostDetail ({}) {
                     <div className="mt-3 flex justify-center space-x-3 text-gray-500 ">
                         <div className="flex items-center gap-3">
                             <div className="relative h-10 w-10 flex-shrink-0">
-                                {post?.createdBy && (
-                                    <Link href={`/author/${post?.createdBy}`}>
+                                {post?.author && (
+                                    <Link href={`/author/${JSON.parse(post?.author).username}`}>
                                         <Image
                                             src={JSON.parse(post?.author).avatarUrl}
-                                            alt={post?.createdBy}
+                                            alt={JSON.parse(post?.author).fullName}
                                             className="rounded-full object-cover"
                                             fill
                                             sizes="40px"
@@ -52,9 +52,13 @@ export default function PostDetail ({}) {
                             </div>
                             <div>
                                 <p className="text-gray-800 dark:text-gray-400">
-                                    <Link href={`/author/${post?.createdBy}`}>
-                                        {post?.createdBy}
-                                    </Link>
+                                    {
+                                        post?.author && (
+                                            <Link href={`/author/${JSON.parse(post?.author).username}`}>
+                                                {JSON.parse(post?.author).fullName}
+                                            </Link>
+                                        )
+                                    }
                                 </p>
                                 <div className="flex items-center space-x-2 text-sm">
                                     <time

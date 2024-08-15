@@ -100,7 +100,7 @@ export default function PostList({post, aspect, minimal, pathPrefix, preloadImag
                                         />
                                     </div>
                                     <span className="truncate text-sm">
-                                        {post?.createdBy}
+                                        {authorShow?.fullName}
                                     </span>
                                 </div>
                             </Link>
