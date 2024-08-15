@@ -1,9 +1,26 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import styles from "./login.module.scss";
 import classNames from "classnames/bind";
+import {checkLogin, login} from "../api/user.api";
+import {useRouter} from "next/router";
 const cx = classNames.bind(styles)
 
 export default function Login() {
+    const router = useRouter();
+
+    // username, password
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
+    const onChangeUsername = (e) => {
+        setUsername(e.target.value);
+    }
+    const onChangePassword = (e) => {
+        setPassword(e.target.value);
+    }
+
+    //
+
     const [isLoginPanel, setIsLoginPanel] = useState(true);
 
     const [showPasswordLogin, setShowPasswordLogin] = useState(false);
@@ -19,6 +36,20 @@ export default function Login() {
     const togglePasswordReEnterSignUp = () => {
         setShowPasswordReEnterSignUp(!showPasswordReEnterSignUp);
     };
+
+    useEffect(() => {
+
+    }, []);
+
+    const onLogin = () => {
+        login(username, password).then((res) => {
+            // Save token
+            localStorage.setItem("token", res.data.token);
+            router.push("/");
+        }, (err) => {
+
+        })
+    }
     return (
         <>
             <section className={cx("bg-gray-100 min-h-screen flex box-border justify-center items-center", "bg-login")}>
@@ -29,8 +60,8 @@ export default function Login() {
                                 <h2 className="font-bold text-3xl text-[#002D74]">Login</h2>
                                 <p className="text-sm mt-4 text-[#002D74]">If you already a member, easily log in now.</p>
 
-                                <form action="" className="flex flex-col gap-4">
-                                    <input className="p-2 mt-8 rounded-xl border" type="password" name="email" placeholder="Email" />
+                                <div className="flex flex-col gap-4">
+                                    <input className="p-2 mt-8 rounded-xl border" type="text" name="email" placeholder="Username" value={username} onChange={onChangeUsername} />
                                     <div className="relative">
                                         <input
                                             className="p-2 rounded-xl border w-full"
@@ -38,6 +69,8 @@ export default function Login() {
                                             name="password"
                                             id="password"
                                             placeholder="Password"
+                                            value={password}
+                                            onChange={onChangePassword}
                                         />
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -74,8 +107,8 @@ export default function Login() {
                                             />
                                         </svg>
                                     </div>
-                                    <button className="bg-[#002D74] text-white py-2 rounded-xl hover:scale-105 duration-300 hover:bg-[#206ab1] font-medium" type="submit">Login</button>
-                                </form>
+                                    <button onClick={onLogin} className="bg-[#002D74] text-white py-2 rounded-xl hover:scale-105 duration-300 hover:bg-[#206ab1] font-medium" type="submit">Login</button>
+                                </div>
                                 {/*<div className="mt-6 items-center text-gray-100">
                             <hr className="border-gray-300" />
                             <p className="text-center text-sm">OR</p>
@@ -104,7 +137,7 @@ export default function Login() {
                                 <p className="text-sm mt-4 text-[#002D74]">Sign up for an account here to post, comment
                                     and more.</p>
 
-                                <form action="" className="flex flex-col gap-4">
+                                <div className="flex flex-col gap-4">
                                     <input className="p-2 mt-8 rounded-xl border" type="email" name="email"
                                            placeholder="Email"/>
                                     <div className="relative">
@@ -197,7 +230,7 @@ export default function Login() {
                                         className="bg-[#002D74] text-white py-2 rounded-xl hover:scale-105 duration-300 hover:bg-[#206ab1] font-medium"
                                         type="submit">Sign up
                                     </button>
-                                </form>
+                                </div>
                                 <div className="mt-10 text-sm border-b border-gray-500 py-5 playfair tooltip"></div>
 
                                 <div className="mt-4 text-sm flex justify-between items-center container-mr">

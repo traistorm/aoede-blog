@@ -7,7 +7,7 @@ import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { myLoader } from "../utils/all";
 import Container from "./container";
 
-export default function Navbar(props) {
+export default function Navbar(props, user) {
   const leftmenu = [
     {
       label: "Home",
@@ -130,6 +130,16 @@ export default function Navbar(props) {
                           key={`${item.label}${index}`}
                           items={item.children}
                         />
+                      ) : item.label === 'Login' && user ? (
+                          <div className="px-5 py-2 cursor-pointer transition-all hover:scale-110">
+                            <Image
+                                src={"https://m.media-amazon.com/images/I/71+17bVYHxL._AC_UF1000,1000_QL80_.jpg"}
+                                alt={"avatar"}
+                                className="rounded-full"
+                                height={35}
+                                width={35}
+                            />
+                          </div>
                       ) : (
                         <Link
                           href={item.href}
@@ -160,6 +170,15 @@ export default function Navbar(props) {
                           items={item.children}
                           mobile={true}
                         />
+                      ) : item.label === 'Login' && user ? (
+                          <Link
+                              href={item.href}
+                              key={`${item.label}${index}`}
+                              className="w-full px-5 py-2 text-sm font-medium text-gray-600 hover:text-blue-500 dark:text-gray-400"
+                              target={item.external ? "_blank" : ""}
+                              rel={item.external ? "noopener" : ""}>
+                            Profile
+                          </Link>
                       ) : (
                         <Link
                           href={item.href}

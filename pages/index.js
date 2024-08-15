@@ -9,7 +9,7 @@ import {getPosts} from "../api/blogs.api";
 import PostList from "../components/postlist";
 const cx = classNames.bind(styles)
 
-export default function Home() {
+export default function Home({user}) {
     const [sizePerPage, setSizePerPage] = useState(10)
     const [hasMorePost, setHasMorePost] = useState(true);
     const [postPage, setPostPage] = useState(0)
