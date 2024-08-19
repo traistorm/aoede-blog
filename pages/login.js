@@ -3,10 +3,18 @@ import styles from "./login.module.scss";
 import classNames from "classnames/bind";
 import {checkLogin, login} from "../api/user.api";
 import {useRouter} from "next/router";
+import {useDispatch, useSelector} from "react-redux";
+import {setUser} from "../redux/action";
+import DefaultLayout from "../layout/defaultlayout/default.layout";
+import Home from "./index";
+import NoLayout from "../layout/nolayout/no.layout";
 const cx = classNames.bind(styles)
 
 export default function Login() {
+    //const { user, loading } = useUser();
     const router = useRouter();
+    const dispatch = useDispatch();
+    const user = useSelector(state => state.user);
 
     // username, password
     const [username, setUsername] = useState("");
@@ -38,12 +46,15 @@ export default function Login() {
     };
 
     useEffect(() => {
-
+        if (user) {
+            router.push("/");
+        }
     }, []);
 
     const onLogin = () => {
         login(username, password).then((res) => {
             // Save token
+            dispatch(setUser(res.data));
             localStorage.setItem("token", res.data.token);
             router.push("/");
         }, (err) => {
@@ -252,5 +263,11 @@ export default function Login() {
                 </div>
             </section>
         </>
+    )
+}
+
+Login.getLayout = function getLayout(page) {
+    return (
+        <NoLayout>{page}</NoLayout>
     )
 }

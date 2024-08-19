@@ -4,12 +4,12 @@ import Cookies from "js-cookie";
 import {useRouter} from "next/router";
 import Head from "next/head";
 import {createStore} from "redux";
-import {Provider, useDispatch} from "react-redux";
+import {Provider, useDispatch, useSelector} from "react-redux";
 import store from "../redux/store";
 import {ThemeProvider} from "next-themes";
 import {checkLogin} from "../api/user.api";
-import useUser from "../hook/user";
-
+import {useUser} from "../hook/user";
+import {setUser} from "../redux/action";
 
 export default function App({ Component, pageProps }) {
     const router = useRouter()
@@ -28,6 +28,7 @@ export default function App({ Component, pageProps }) {
                 localStorage.removeItem("token");
             })
         }*/
+
     }, []);
     const updateActiveUser = () =>  {
         /*if (Cookies.get("token") !== undefined) {

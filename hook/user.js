@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect, createContext, useContext} from 'react';
 import { useRouter } from 'next/router';
 import {checkLogin} from "../api/user.api";
 
-const useUser = () => {
+const UserContext = createContext();
+const UserProvider = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-
         if (token) {
             checkLogin(token)
                 .then((res) => {
@@ -29,10 +29,13 @@ const useUser = () => {
         } else {
             setUser(null);
             setLoading(false);
+            router.push('/login');
         }
     }, [router]);
 
     return { user, loading };
 };
 
-export default useUser;
+export const useUser = () => {
+    return useContext(UserContext);
+};

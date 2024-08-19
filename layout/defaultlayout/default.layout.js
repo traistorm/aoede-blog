@@ -6,12 +6,15 @@ import React, {useEffect, useState} from "react";
 import Link from "next/link";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
-import useUser from "../../hook/user";
+import {checkLogin} from "../../api/user.api";
+import {setUser} from "../../redux/action";
+import {useDispatch} from "react-redux";
 const cx = classNames.bind(styles)
 
 export default function DefaultLayout({children}) {
-    const { user, loading } = useUser();
+    //const { user, loading } = useUser();
     const [selectedPage, setSelectedPage] = useState("home")
+    const dispatch = useDispatch();
     const router = useRouter();
     const { pathname } = router;
     useEffect(() => {
@@ -22,6 +25,20 @@ export default function DefaultLayout({children}) {
         } else if (pathname.includes('/community')) {
             setSelectedPage("community");
         }
+
+        if (localStorage.getItem("token")) {
+            checkLogin(localStorage.getItem("token")).then((res) => {
+                dispatch(setUser(res.data));
+                router.push("/");
+            }, (err) => {
+                localStorage.removeItem("token");
+                dispatch(setUser(null));
+                router.push("/login");
+            })
+        } else {
+            dispatch(setUser(null));
+            router.push("/login");
+        }
     }, []);
 
     const handleChangeSelectedPage = (page) => {
@@ -30,10 +47,10 @@ export default function DefaultLayout({children}) {
     const settings = [];
     return (
         <>
-            <Navbar user={user} {...settings} />
+            <Navbar {...settings} />
 
             <div>
-                {React.cloneElement(children, {user})}
+                {React.cloneElement(children)}
             </div>
 
             <Footer {...settings} />

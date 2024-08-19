@@ -1,6 +1,6 @@
 // Khởi tạo trạng thái ban đầu của ứng dụng
 const initialState = {
-    videoUrl: ""
+    //videoUrl: ""
 };
 
 // Định nghĩa reducers
@@ -11,6 +11,11 @@ const rootReducer = (state = initialState, action) => {
                 ...state,
                 videoUrl: "https://www.youtube.com/watch?v=" + action.payload,
             };
+        case 'SET_USER':
+            return {
+                ...state,
+                user: action.payload,
+            }
         default:
             return state;
     }
