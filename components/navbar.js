@@ -6,12 +6,15 @@ import cx from "clsx";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { myLoader } from "../utils/all";
 import Container from "./container";
+import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
+import {useSelector} from "react-redux";
 
-export default function Navbar(props, user) {
+export default function Navbar(props) {
+  const user = useSelector(state => state.user);
   const leftmenu = [
     {
       label: "Home",
-      href: "/"
+      href: "/",
     },
     {
       label: "Posts",
@@ -30,7 +33,12 @@ export default function Navbar(props, user) {
     },
     {
       label: "Login",
-      href: "/login"
+      href: "/login",
+      children: [
+        { title: user?.fullName, path: `/author/${user?.id}` },
+        ...(user?.isAdmin ? [{ title: 'Create post', path: `/create-post` }] : []),
+        { title: "Logout", path: "/" },
+      ],
     },
     /*{
       label: "Pro Version",
@@ -58,10 +66,11 @@ export default function Navbar(props, user) {
                   {leftmenu.map((item, index) => (
                     <Fragment key={`${item.label}${index}`}>
                       {item.children && item.children.length > 0 ? (
-                        <DropdownMenu
+                        <DropdownMenuCustom
                           menu={item}
                           key={`${item.label}${index}`}
                           items={item.children}
+                          user={user}
                         />
                       ) : (
                         <Link
@@ -125,22 +134,35 @@ export default function Navbar(props, user) {
                   {rightmenu.map((item, index) => (
                     <Fragment key={`${item.label}${index}`}>
                       {item.children && item.children.length > 0 ? (
-                        <DropdownMenu
+                        <DropdownMenuCustom
                           menu={item}
                           key={`${item.label}${index}`}
                           items={item.children}
+                          user={user}
                         />
-                      ) : item.label === 'Login' && user ? (
-                          <div className="px-5 py-2 cursor-pointer transition-all hover:scale-110">
-                            <Image
-                                src={"https://m.media-amazon.com/images/I/71+17bVYHxL._AC_UF1000,1000_QL80_.jpg"}
-                                alt={"avatar"}
-                                className="rounded-full"
-                                height={35}
-                                width={35}
-                            />
-                          </div>
-                      ) : (
+                      ) /*: item.label === 'Login' && user ? (
+                          <Dropdown>
+                            <DropdownTrigger>
+                              <div className="px-5 cursor-pointer transition-all hover:scale-110">
+                                <Image
+                                    src={"https://m.media-amazon.com/images/I/71+17bVYHxL._AC_UF1000,1000_QL80_.jpg"}
+                                    alt={"avatar"}
+                                    className="rounded-full"
+                                    height={35}
+                                    width={35}
+                                />
+                              </div>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                className="bg-gray-100 p-2 rounded-md"
+                                aria-label="Example with disabled actions"
+                                disabledKeys={["edit", "delete"]}
+                            >
+                              <DropdownItem key="new" className="hover:text-blue-500 mb-2">{user.username}</DropdownItem>
+                              <DropdownItem key="copy" className="hover:text-blue-500 mb-2">Logout</DropdownItem>
+                            </DropdownMenu>
+                          </Dropdown>
+                      )*/ : (
                         <Link
                           href={item.href}
                           key={`${item.label}${index}`}
@@ -164,17 +186,18 @@ export default function Navbar(props, user) {
                   {mobilemenu.map((item, index) => (
                     <Fragment key={`${item.label}${index}`}>
                       {item.children && item.children.length > 0 ? (
-                        <DropdownMenu
+                        <DropdownMenuCustom
                           menu={item}
                           key={`${item.label}${index}`}
                           items={item.children}
                           mobile={true}
+                          user={user}
                         />
                       ) : item.label === 'Login' && user ? (
                           <Link
                               href={item.href}
                               key={`${item.label}${index}`}
-                              className="w-full px-5 py-2 text-sm font-medium text-gray-600 hover:text-blue-500 dark:text-gray-400"
+                              className="w-full px-5 py-2 text-base font-medium text-gray-600 hover:text-blue-500 dark:text-gray-400"
                               target={item.external ? "_blank" : ""}
                               rel={item.external ? "noopener" : ""}>
                             Profile
@@ -183,7 +206,7 @@ export default function Navbar(props, user) {
                         <Link
                           href={item.href}
                           key={`${item.label}${index}`}
-                          className="w-full px-5 py-2 text-sm font-medium text-gray-600 hover:text-blue-500 dark:text-gray-400"
+                          className="w-full px-5 py-2 text-base font-medium text-gray-600 hover:text-blue-500 dark:text-gray-400"
                           target={item.external ? "_blank" : ""}
                           rel={item.external ? "noopener" : ""}>
                           {item.label}
@@ -201,59 +224,123 @@ export default function Navbar(props, user) {
   );
 }
 
-const DropdownMenu = ({ menu, items, mobile }) => {
+const DropdownMenuCustom = ({ menu, items, mobile, user }) => {
   return (
-    <Menu
-      as="div"
-      className={cx("relative text-left", mobile && "w-full")}>
-      {({ open }) => (
-        <>
-          <Menu.Button
-            className={cx(
-              "flex items-center gap-x-1 rounded-md px-5 py-2 text-sm font-medium  outline-none transition-all focus:outline-none focus-visible:text-indigo-500 focus-visible:ring-1 dark:focus-visible:bg-gray-800",
-              open
-                ? "text-blue-500 hover:text-blue-500"
-                : " text-gray-600 dark:text-gray-400 ",
-              mobile ? "w-full px-4 py-2 " : "inline-block px-4 py-2"
-            )}>
-            <span>{menu.label}</span>
-            <ChevronDownIcon className="mt-0.5 h-4 w-4" />
-          </Menu.Button>
-          <Transition
-            as={Fragment}
-            enter="lg:transition lg:ease-out lg:duration-100"
-            enterFrom="lg:transform lg:opacity-0 lg:scale-95"
-            enterTo="lg:transform lg:opacity-100 lg:scale-100"
-            leave="lg:transition lg:ease-in lg:duration-75"
-            leaveFrom="lg:transform lg:opacity-100 lg:scale-100"
-            leaveTo="lg:transform lg:opacity-0 lg:scale-95">
-            <Menu.Items
-              className={cx(
-                "z-20 origin-top-left rounded-md  focus:outline-none  lg:absolute lg:left-0  lg:w-56",
-                !mobile && "bg-white shadow-lg  dark:bg-gray-800"
-              )}>
-              <div className={cx(!mobile && "py-3")}>
-                {items.map((item, index) => (
-                  <Menu.Item as="div" key={`${item.title}${index}`}>
-                    {({ active }) => (
-                      <Link
-                        href={item?.path ? item.path : "#"}
-                        className={cx(
-                          "flex items-center space-x-2 px-5 py-2 text-sm lg:space-x-4",
-                          active
-                            ? "text-blue-500"
-                            : "text-gray-700 hover:text-blue-500 focus:text-blue-500 dark:text-gray-300"
-                        )}>
-                        <span> {item.title}</span>
-                      </Link>
-                    )}
-                  </Menu.Item>
-                ))}
-              </div>
-            </Menu.Items>
-          </Transition>
-        </>
-      )}
-    </Menu>
+      <>
+        {
+          user? (
+              <Menu
+                  as="div"
+                  className={cx("relative text-left", mobile && "w-full")}>
+                {({ open }) => (
+                    <>
+                      {menu.label === 'Login' && user && !mobile ? (
+                          <Menu.Button className="outline-none transition-all focus:outline-none">
+                            <div className="px-5 cursor-pointer transition-all hover:scale-110">
+                              <Image
+                                  src={"https://m.media-amazon.com/images/I/71+17bVYHxL._AC_UF1000,1000_QL80_.jpg"}
+                                  alt={"avatar"}
+                                  className="rounded-full"
+                                  height={35}
+                                  width={35}
+                              />
+                            </div>
+                          </Menu.Button>
+                      ) : (
+                          <Menu.Button
+                              className={cx(
+                                  "text-base flex items-center gap-x-1 rounded-md px-5 py-2 font-medium outline-none transition-all focus:outline-none focus-visible:text-indigo-500 focus-visible:ring-1 dark:focus-visible:bg-gray-800",
+                                  open
+                                      ? "text-blue-500 hover:text-blue-500"
+                                      : "text-gray-600 dark:text-gray-400",
+                                  mobile ? "w-full px-4 py-2" : "inline-block px-4 py-2"
+                              )}
+                          >
+                            {
+                              user? (
+                                  <span>Profile</span>
+                              ) : (
+                                  <span>{menu.label}</span>
+                              )
+                            }
+                            <ChevronDownIcon className="mt-0.5 h-4 w-4" />
+                          </Menu.Button>
+                      )}
+                      <Transition
+                          as={Fragment}
+                          enter="lg:transition lg:ease-out lg:duration-100"
+                          enterFrom="lg:transform lg:opacity-0 lg:scale-95"
+                          enterTo="lg:transform lg:opacity-100 lg:scale-100"
+                          leave="lg:transition lg:ease-in lg:duration-75"
+                          leaveFrom="lg:transform lg:opacity-100 lg:scale-100"
+                          leaveTo="lg:transform lg:opacity-0 lg:scale-95">
+                        {
+                          !mobile? (
+                              <Menu.Items
+                                  className={cx(
+                                      "w-32 z-20 origin-top-left rounded-md  focus:outline-none  lg:absolute lg:left-0",
+                                      !mobile && "bg-white shadow-lg  dark:bg-gray-800"
+                                  )}>
+                                <div className={cx(!mobile && "py-3")}>
+                                  {items.map((item, index) => (
+                                      <Menu.Item as="div" key={`${item.title}${index}`}>
+                                        {({ active }) => (
+                                            <Link
+                                                href={item?.path ? item.path : "#"}
+                                                className={cx(
+                                                    "flex items-center space-x-2 px-5 py-2 text-base lg:space-x-4",
+                                                    active
+                                                        ? "text-blue-500"
+                                                        : "text-gray-700 hover:text-blue-500 focus:text-blue-500 dark:text-gray-300"
+                                                )}>
+                                              <span> {item.title}</span>
+                                            </Link>
+                                        )}
+                                      </Menu.Item>
+                                  ))}
+                                </div>
+                              </Menu.Items>
+                          ) : (
+                              <Menu.Items
+                                  className={cx(
+                                      "ml-3 z-20 origin-top-left rounded-md  focus:outline-none  lg:absolute lg:left-0",
+                                      !mobile && "bg-white shadow-lg  dark:bg-gray-800"
+                                  )}>
+                                <div className={cx(!mobile && "py-3")}>
+                                  {items.map((item, index) => (
+                                      <Menu.Item as="div" key={`${item.title}${index}`}>
+                                        {({ active }) => (
+                                            <Link
+                                                href={item?.path ? item.path : "#"}
+                                                className={cx(
+                                                    "flex items-center space-x-2 px-5 py-2 text-base lg:space-x-4",
+                                                    active
+                                                        ? "text-blue-500"
+                                                        : "text-gray-700 hover:text-blue-500 focus:text-blue-500 dark:text-gray-300"
+                                                )}>
+                                              <span> {item.title}</span>
+                                            </Link>
+                                        )}
+                                      </Menu.Item>
+                                  ))}
+                                </div>
+                              </Menu.Items>
+                          )
+                        }
+                      </Transition>
+                    </>
+                )}
+              </Menu>
+          ) : (
+              <Link
+                  href={menu.href}
+                  className="w-full px-5 py-2 text-base font-medium text-gray-600 hover:text-blue-500 dark:text-gray-400"
+                  target={menu.external ? "_blank" : ""}
+                  rel={menu.external ? "noopener" : ""}>
+                {menu.label}
+              </Link>
+          )
+        }
+      </>
   );
 };

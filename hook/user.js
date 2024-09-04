@@ -24,12 +24,12 @@ const UserProvider = () => {
                 localStorage.removeItem('token');
                 setUser(null);
                 setLoading(false);
-                router.push('/login');
+                //router.push('/login');
             });
         } else {
             setUser(null);
             setLoading(false);
-            router.push('/login');
+            //router.push('/login');
         }
     }, [router]);
 

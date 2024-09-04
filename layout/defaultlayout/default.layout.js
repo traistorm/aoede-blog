@@ -29,15 +29,17 @@ export default function DefaultLayout({children}) {
         if (localStorage.getItem("token")) {
             checkLogin(localStorage.getItem("token")).then((res) => {
                 dispatch(setUser(res.data));
-                router.push("/");
+                if (pathname.includes('/login')) {
+                    router.push("/");
+                }
             }, (err) => {
                 localStorage.removeItem("token");
                 dispatch(setUser(null));
-                router.push("/login");
+                //router.push("/login");
             })
         } else {
             dispatch(setUser(null));
-            router.push("/login");
+            //router.push("/login");
         }
     }, []);
 

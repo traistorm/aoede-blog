@@ -36,6 +36,10 @@ input::-ms-clear {
   display: none;
 }
 
+.custom-quill-editor .ql-container {
+  min-height: 200px;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
