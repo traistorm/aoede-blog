@@ -8,8 +8,10 @@ import 'react-quill/dist/quill.snow.css';
 import useFormValidate from "../hook/useFormValidate";
 import {createPost} from "../api/user.api";
 //import Select from 'react-select'
-import {useTheme} from "next-themes";
 import Dropdown from "../components/ui/dropdown";
+import {useTheme} from "next-themes";
+import {getCategoryCombobox} from "../api/blogs.api";
+import UploadImage from "../components/ui/upload-image";
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const initDataFrom = {
@@ -17,48 +19,28 @@ const initDataFrom = {
         title: '',
         description: '',
         content: "<p><br></p>",
-        categories: []
+        categories: [],
+        thumbnailImage: ''
     },
     rules: {
         title: { required: true, minLength: 20, maxLength: 100 },
         description: { required: true, minLength: 20, maxLength: 100 },
         content: { required: true, minLength: 100, maxLength: 2000 },
         categories: { required: true },
+        thumbnailImage: { required: true },
     },
     types: {
         title: 'input',
         description: 'input', // Thêm description nếu bạn cần loại này
         categories: 'dropdown',
         content: "input-react-quill",
+        thumbnailImage: "image",
     },
 };
 
-const categories = [
-    { key: 'tech', label: 'Technology' },
-    { key: 'health', label: 'Health' },
-    { key: 'finance', label: 'Finance' },
-    { key: 'education', label: 'Education' },
-    // Thêm các mục khác nếu cần
-];
-
-
-export default function CreatePost({settings}) {
-    const { theme, setTheme } = useTheme();
-    const [currentTheme, setCurrentTheme] = useState(theme); // State để lưu theme hiện tại
-    /*const categories = [
-        { value: 'cat1', label: 'Category 1' },
-        { value: 'cat2', label: 'Category 2' },
-        { value: 'cat3', label: 'Category 3' },
-    ];*/
-
-    // Hàm kiểm tra và thiết lập theme từ localStorage
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            setCurrentTheme(savedTheme);
-            setTheme(savedTheme);
-        }
-    }, []);
+export default function CreatePost({setAlertDataFunction}) {
+    const [categoryOptions, setCategoryOptions] = useState([])
+    const [selectedCategories, setSelectedCategories] = useState([]);
     const {
         values,
         errors,
@@ -67,62 +49,31 @@ export default function CreatePost({settings}) {
         isValid,
         setValues
     } = useFormValidate(initDataFrom);
-    const [content, setContent] = useState('');
+
+    useEffect(() => {
+        getCategoryCombobox().then((res) => {
+            setCategoryOptions(res)
+        }, (err) => {
+        })
+    }, []);
 
     const createNewPost = () => {
+        const category_ids = selectedCategories.map(label => {
+            const option = categoryOptions.find(option => option.label === label);
+            return option ? option.value : null; // Trả về value nếu tìm thấy, ngược lại trả về null
+        }).filter(id => id !== null).join(','); // Lọc bỏ các giá trị null
+
         const postData = {
+            description: values.description,
             title: values.title,
             content: values.content,
+            categoryIds: category_ids
         }
         createPost(postData).then((res) => {
-
+            setAlertDataFunction("createSuccess", "Create post successfully!");
         }, (err) => {
-
         })
     }
-
-    const customStyles = {
-        control: (provided, state) => ({
-            ...provided,
-            height: 50, // Thay đổi chiều cao tại đây
-            minHeight: 50, // Chiều cao tối thiểu
-            border: `2px solid ${state.isFocused ? (errors.categories ? 'red' : 'gray') : (errors.categories ? 'red' : 'rgb(209, 213, 219)')}`, // Border color
-            boxShadow: state.isFocused ? (errors.categories ? '0 0 0 1px rgba(255, 0, 0, 0.5)' : '0 0 0 1px rgba(0, 0, 0, 0.2)') : null, // Shadow khi focus
-            '&:hover': {
-                border: `2px solid ${errors.categories ? 'red' : 'gray'}`, // Border hover
-            },
-            padding: '', // Padding tương ứng với py-3 px-4
-            backgroundColor: state.isFocused ? (theme === 'dark' ? 'rgb(23,23,23)' : 'white') : (currentTheme === 'dark' ? 'rgb(23,23,23)' : 'white'), // Màu nền
-        }),
-        placeholder: (provided) => ({
-            ...provided,
-            marginLeft: '0.5em', // Đảm bảo margin là 0
-            color: (theme === 'dark' ? 'white' : 'black')
-        }),
-        input: (provided) => ({
-            ...provided,
-
-            marginLeft: '0.5em'
-        }),
-        menu: (provided) => ({
-            ...provided,
-            backgroundColor: theme === 'dark' ? '#1a202c' : 'white', // Màu nền của menu
-            border: `2px solid ${theme === 'dark' ? 'gray' : 'rgb(209, 213, 219)'}`, // Màu border của menu
-        }),
-        option: (provided, state) => ({
-            ...provided,
-            backgroundColor: state.isFocused ? (theme === 'dark' ? '#4a5568' : '#e2e8f0') : (theme === 'dark' ? '#1a202c' : 'white'), // Màu nền của option
-            color: theme === 'dark' ? 'white' : 'black', // Màu chữ khi focus
-        }),
-    };
-
-    const options = [
-        { value: '1', label: 'Tùy chọn 1' },
-        { value: '2', label: 'Tùy chọn 2' },
-        { value: '3', label: 'Tùy chọn 3' },
-        { value: '4', label: 'Tùy chọn 4' },
-        { value: '5', label: 'Tùy chọn 5' },
-    ];
 
     return (
         <Container>
@@ -148,7 +99,7 @@ export default function CreatePost({settings}) {
                     />
                     {errors.title && (
                         <div className="mt-1 text-red-600">
-                            <small>{errors.title}</small> {/* Hiển thị thông báo lỗi */}
+                            <small>{errors.title}</small>  Hiển thị thông báo lỗi
                         </div>
                     )}
                 </div>
@@ -170,13 +121,16 @@ export default function CreatePost({settings}) {
                     />
                     {errors.description && (
                         <div className="mt-1 text-red-600">
-                            <small>{errors.description}</small> {/* Hiển thị thông báo lỗi */}
+                            <small>{errors.description}</small>  Hiển thị thông báo lỗi
                         </div>
                     )}
                 </div>
                 <div className="mb-5">
                     <Dropdown
-                        options={options}
+                        selectedOptions={selectedCategories}
+                        setSelectedOptions={setSelectedCategories}
+                        errors={errors}
+                        options={categoryOptions}
                         placeholder={"Select"}
                         onChange={(selectedOptions) => {
                             const event = {
@@ -204,71 +158,83 @@ export default function CreatePost({settings}) {
                         </div>
                     )}
                 </div>
-                {/*<div className="mb-5">
-                    <select
-                        multiple
-                        value={selectedOptions}
-                        onChange={handleChange}
-                        className="block w-full h-36 p-2 border border-gray-300 rounded-md bg-white text-gray-700 focus:border-blue-500 focus:outline-none"
+                <div className="mb-5">
+                    {/*<div className="flex items-center space-x-2">
+                        <div className="whitespace-nowrap">Thumbnail image</div>
+                        <UploadImage
+                            error={errors}
+                            onChange={(value) => {
+                                // Gọi onChange từ register
+                                const event = {
+                                    target: {name: 'thumbnailImage', value: value || null},
+                                };
+                                register('thumbnailImage', 'image', {required: true,}).onChange({target: {value}});
+                            }}
+                            onFocus={(value) => {
+                                // Gọi onChange từ register
+                                const event = {
+                                    target: {name: 'thumbnailImage', value: value || null},
+                                };
+                                register('thumbnailImage', 'image', {required: true,}).onFocus({target: {value}});
+                            }}
+                        >
+
+                        </UploadImage>
+                    </div>*/}
+                    <UploadImage
+                        placeholder="Upload thumbnail"
+                        error={errors}
+                        onChange={(value) => {
+                            // Gọi onChange từ register
+                            const event = {
+                                target: {name: 'thumbnailImage', value: value || null},
+                            };
+                            register('thumbnailImage', 'image', {required: true,}).onChange({target: {value}});
+                        }}
+                        onFocus={(value) => {
+                            // Gọi onChange từ register
+                            const event = {
+                                target: {name: 'thumbnailImage', value: value || null},
+                            };
+                            register('thumbnailImage', 'image', {required: true,}).onFocus({target: {value}});
+                        }}
                     >
-                        <option value="1">Tùy chọn 1</option>
-                        <option value="2">Tùy chọn 2</option>
-                        <option value="3">Tùy chọn 3</option>
-                        <option value="4">Tùy chọn 4</option>
-                        <option value="5">Tùy chọn 5</option>
-                    </select>
-                    <Select
-                        isMulti
-                        name="categories"
-                        options={categories}
-                        styles={customStyles}
-                        onChange={(selectedOptions) => {
-                            const event = {
-                                target: { name: 'categories', value: selectedOptions || [] },
-                            };
-                            register('categories', 'react-select', {required: true}).onChange(event);
-                        }}
-                        onFocus={(selectedOptions) => {
-                            const event = {
-                                target: { name: 'categories', value: selectedOptions || [] },
-                            };
-                            register('categories', 'react-select', {required: true}).onFocus(event);
-                        }}
-                        onBlur={(selectedOptions) => {
-                            const event = {
-                                target: { name: 'categories', value: selectedOptions || [] },
-                            };
-                            register('categories', 'react-select', {required: true}).onBlur(event);
-                        }}
-                        className={`basic-multi-select ${
-                            errors.categories ? 'border-red-600' : ''
-                        }`}
-                        classNamePrefix="select"
-                    />
-                    {errors.categories && (
+
+                    </UploadImage>
+                    {errors.thumbnailImage && (
                         <div className="mt-1 text-red-600">
-                            <small>{errors.categories}</small>
+                            <small>{errors.thumbnailImage}</small>
                         </div>
                     )}
-                </div>*/}
-                <div className="mb-5">
+                </div>
+                <div className="mb-5 custom-quill-editor">
                     <ReactQuill
                         id="content"
                         value={values.content}
                         onChange={(value) => {
                             // Gọi onChange từ register
-                            register('content', 'input-react-quill', {required: true, minLength: 100, maxLength: 2000}).onChange({ target: { value } });
+                            register('content', 'input-react-quill', {
+                                required: true,
+                                minLength: 100,
+                                maxLength: 2000
+                            }).onChange({target: {value}});
                         }}
-                        onFocus={() => register('content', 'input-react-quill', { required: true }).onFocus()} // Gọi onFocus
-                        onBlur={() => register('content', 'input-react-quill', { required: true }).onBlur()}   // Gọi onBlur
-                        className={`border-2 ${
+                        onFocus={() => register('content', 'input-react-quill', {
+                            required: true,
+                            minLength: 100,
+                            maxLength: 2000
+                        }).onFocus()} // Gọi onFocus
+                        onBlur={() => register('content', 'input-react-quill', {
+                            required: true,
+                            minLength: 100, maxLength: 2000}).onBlur()}   // Gọi onBlur
+                        className={`border-2  ${
                             errors.content ? 'border-red-600 focus:border-red-600 ring-red-100 dark:ring-0' : 
                                 'border-gray-300 focus:border-gray-600 ring-gray-100 dark:border-gray-600 dark:focus:border-white dark:ring-0'
                         }`}
                     />
                     {errors.content && (
                         <div className="mt-1 text-red-600">
-                            <small>{errors.content}</small> {/* Hiển thị thông báo lỗi */}
+                            <small>{errors.content}</small>
                         </div>
                     )}
                 </div>

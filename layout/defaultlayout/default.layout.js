@@ -9,10 +9,12 @@ import Footer from "../../components/footer";
 import {checkLogin} from "../../api/user.api";
 import {setUser} from "../../redux/action";
 import {useDispatch} from "react-redux";
+import {Alert, Stack} from "@mui/material";
 const cx = classNames.bind(styles)
 
 export default function DefaultLayout({children}) {
     //const { user, loading } = useUser();
+    const [alertData, setAlertData] = useState([]);
     const [selectedPage, setSelectedPage] = useState("home")
     const dispatch = useDispatch();
     const router = useRouter();
@@ -43,6 +45,13 @@ export default function DefaultLayout({children}) {
         }
     }, []);
 
+    const setAlertDataFunction = (type, content) => {
+        setAlertData(prevAlertData => [
+            ...prevAlertData,
+            { type, content }
+        ]);
+    };
+
     const handleChangeSelectedPage = (page) => {
         setSelectedPage(page);
     }
@@ -52,10 +61,33 @@ export default function DefaultLayout({children}) {
             <Navbar {...settings} />
 
             <div>
-                {React.cloneElement(children)}
+                {React.cloneElement(children, {setAlertDataFunction: setAlertDataFunction})}
             </div>
 
             <Footer {...settings} />
+            <Stack className="fixed" sx={{top: "10px", right: "10px", zIndex: 1000000, width: "400px"}} spacing={2}>
+                {alertData.map(alert => {
+                    return (
+                        <>
+                            {
+                                (alert.type === "updateSuccess" || alert.type === "createSuccess") ? (
+                                    <Alert
+                                        className={cx('transition-opacity duration-500 ease-in-out opacity-100', 'alert')}
+                                        severity="success">
+                                        {alert.content}
+                                    </Alert>
+                                ) : (
+                                    <Alert
+                                        className={cx('transition-opacity duration-500 ease-in-out opacity-100', 'alert')}
+                                        severity="error">
+                                        {alert.content}
+                                    </Alert>
+                                )
+                            }
+                        </>
+                    )
+                })}
+            </Stack>
         </>
     );
 }

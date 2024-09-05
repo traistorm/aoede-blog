@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-type InputType = 'input' | 'input-react-quill' | 'react-select' | 'dropdown';
+type InputType = 'input' | 'input-react-quill' | 'react-select' | 'dropdown' | 'image';
 type Rule = {
     required?: boolean;
 
@@ -17,6 +17,8 @@ const useFormValidate = (initialData) => {
     const [isFirstFocus, setIsFirstFocus] = useState({});
 
     const validate = (name, value, rules) => {
+        console.log(name);
+        console.log(value);
         const newErrors = { ...errors };
         // Kiểm tra điều kiện required
         if (types[name] === "input-react-quill") {
@@ -73,13 +75,16 @@ const useFormValidate = (initialData) => {
                 [name]: rules
             })
 
-            if (isFirstFocus[name]) {
+            if (isFirstFocus[name] || type === 'image') {
                 validate(name, value, rules);
             }
         },
         onFocus: () => {
             if (!isFirstFocus[name]) {
                 setIsFirstFocus((prev) => ({ ...prev, [name]: true }));
+                if (types[name] === "dropdown") {
+                    validate(name, values[name], rules);
+                }
             }
         },
         onBlur: () => {

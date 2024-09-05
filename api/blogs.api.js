@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+import axiosInstance from "./axiosInstance";
 
 export const getPosts = async (page, size) => {
     const host = process.env.NEXT_PUBLIC_API_HOST;
@@ -36,4 +37,14 @@ export const getPostByTitle = async (title) => {
     return axios.get(
         host + "/api/post/get-post-by-title?title=" + title, headers
     );
+};
+
+export const getCategoryCombobox = async () => {
+    try {
+        const response = await axiosInstance.get('/api/post/get-category-combobox');
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        throw error;
+    }
 };

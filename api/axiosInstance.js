@@ -11,12 +11,10 @@ axiosInstance.interceptors.request.use(
     function (config) {
         // Lấy token từ Cookies
         const token = localStorage.getItem('token'); // Tên 'token' có thể thay đổi tùy theo bạn đã lưu như thế nào
-        console.log(token)
         if (token) {
             // Nạp token vào header Authorization
             config.headers.Authorization = `Bearer ${token}`;
         }
-
         return config;
     },
     function (error) {
