@@ -93,7 +93,7 @@ const Dropdown: React.FC<DropdownProps> = ({ options , placeholder, onChange, on
             >
                 {selectedOptions.length > 0 ? (
                     selectedOptions.map((selected) => (
-                        <div key={selected} className="flex items-center p-1 space-x-2 bg-gray-100 rounded-md dark:bg-gray-200">
+                        <div key={selected} className="flex items-center p-1 space-x-2 bg-gray-200 rounded-md dark:bg-gray-200">
                             <div className="whitespace-nowrap dark:text-black">
                                 {options.filter((option) => option.label === selected).map((option) => option.label)[0]}
                             </div>

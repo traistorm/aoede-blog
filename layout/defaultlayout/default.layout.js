@@ -70,7 +70,7 @@ export default function DefaultLayout({children}) {
                     return (
                         <>
                             {
-                                (alert.type === "updateSuccess" || alert.type === "createSuccess") ? (
+                                (alert.type === "updateSuccess" || alert.type === "createSuccess" || alert.type === "success") ? (
                                     <Alert
                                         className={cx('transition-opacity duration-500 ease-in-out opacity-100', 'alert')}
                                         severity="success">

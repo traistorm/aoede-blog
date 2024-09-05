@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import {uploadFile} from "../../api/file.api";
+import GradientCircularProgress from "../loading/GradientCircularProgress"
+
 interface UploadImageProps {
+    value?: string
+
     placeholder?: string
 
     error?: any;
@@ -8,9 +12,12 @@ interface UploadImageProps {
     onChange?: (file: any) => void;
 
     onFocus?: () => void;
+
+    setAlertDataFunction?: (type, message) => void;
 }
 
-const UploadImage: React.FC<UploadImageProps> = ({error, onChange, onFocus, placeholder}) => {
+const UploadImage: React.FC<UploadImageProps> = ({error, onChange, onFocus, placeholder, value, setAlertDataFunction}) => {
+    const [uploadingImage, setUploadingImage] = useState(false);
     const [preview, setPreview] = useState<string | null>(null);
     const [isHovered, setIsHovered] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,24 +25,42 @@ const UploadImage: React.FC<UploadImageProps> = ({error, onChange, onFocus, plac
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files ? e.target.files[0] : null;
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreview(reader.result as string);
-            };
-            reader.readAsDataURL(file);
+            const fileSizeInMB = file.size / (1024 * 1024); // Kích thước tệp tính bằng MB
 
+            if (fileSizeInMB > 1) {
+                const fileInput = document.getElementById('upload-image') as HTMLInputElement;
+                fileInput.value = null; // Reset giá trị của input file
+                setAlertDataFunction("uploadingFail", "Maximum image size 1MB");
+                return;
+            }
             // Call APiI upload image
+            setUploadingImage(true);
             uploadFile(file).then((res) => {
-
+                if (onChange) {
+                    onChange(res);
+                }
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setPreview(reader.result as string);
+                };
+                reader.readAsDataURL(file);
+                setUploadingImage(false);
+                setAlertDataFunction("success", "Image upload successful");
             }, (err) => {
-
+                if (onChange) {
+                    onChange(null);
+                }
+                setPreview(null);
+                setAlertDataFunction("uploadingFail", "Image upload failed");
+                setUploadingImage(false);
+                const fileInput = document.getElementById('upload-image') as HTMLInputElement;
+                fileInput.value = null; // Reset giá trị của input file
             })
         } else {
             setPreview(null);
-        }
-
-        if (onChange) {
-            onChange(file);
+            if (onChange) {
+                onChange(null);
+            }
         }
     };
 
@@ -75,22 +100,32 @@ const UploadImage: React.FC<UploadImageProps> = ({error, onChange, onFocus, plac
                         className="bg-gray-100 cursor-pointer p-4 rounded-lg shadow-md flex flex-col items-center justify-center w-32 h-32 border border-gray-300 transition-all duration-300 ease-in-out hover:border-dashed hover:border-blue-500"
                     >
                         {/* SVG dấu cộng */}
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="w-8 h-8 mb-2"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 4.5v15m7.5-7.5h-15"
-                            />
-                        </svg>
+                        {uploadingImage? (
+                            <GradientCircularProgress size={20} />
+                        ) : (
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="w-8 h-8 mb-2"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M12 4.5v15m7.5-7.5h-15"
+                                />
+                            </svg>
+                        )}
                         {/* Nút Upload Image */}
-                        <span className="text-sm font-bold text-center">{placeholder}</span>
+                        {
+                            uploadingImage? (
+                                <span className="text-sm font-bold text-center">Uploading</span>
+                            ) : (
+                                <span className="text-sm font-bold text-center">{placeholder}</span>
+                            )
+                        }
                     </label>
                 </div>
             ) : (
@@ -168,7 +203,8 @@ const UploadImage: React.FC<UploadImageProps> = ({error, onChange, onFocus, plac
                     <img
                         src={preview || ''}
                         alt="Full Preview"
-                        className="w-96 h-96 object-contain"
+                        style={{maxHeight: '90vh', maxWidth: "90vw"}}
+                        className="object-contain"
                     />
                 </div>
             </div>

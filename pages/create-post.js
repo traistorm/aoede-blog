@@ -12,6 +12,7 @@ import Dropdown from "../components/ui/dropdown";
 import {useTheme} from "next-themes";
 import {getCategoryCombobox} from "../api/blogs.api";
 import UploadImage from "../components/ui/upload-image";
+import {useRouter} from "next/router";
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const initDataFrom = {
@@ -39,6 +40,7 @@ const initDataFrom = {
 };
 
 export default function CreatePost({setAlertDataFunction}) {
+    const router = useRouter();
     const [categoryOptions, setCategoryOptions] = useState([])
     const [selectedCategories, setSelectedCategories] = useState([]);
     const {
@@ -67,10 +69,12 @@ export default function CreatePost({setAlertDataFunction}) {
             description: values.description,
             title: values.title,
             content: values.content,
-            categoryIds: category_ids
+            categoryIds: category_ids,
+            thumbnailImageUrl: values.thumbnailImage
         }
         createPost(postData).then((res) => {
-            setAlertDataFunction("createSuccess", "Create post successfully!");
+            setAlertDataFunction("createSuccess", "Post created successfully");
+            router.push("/post/" + res.title.replace(/\s+/g, '-').toLowerCase())
         }, (err) => {
         })
     }
@@ -99,7 +103,7 @@ export default function CreatePost({setAlertDataFunction}) {
                     />
                     {errors.title && (
                         <div className="mt-1 text-red-600">
-                            <small>{errors.title}</small>  Hiển thị thông báo lỗi
+                            <small>{errors.title}</small>
                         </div>
                     )}
                 </div>
@@ -121,7 +125,7 @@ export default function CreatePost({setAlertDataFunction}) {
                     />
                     {errors.description && (
                         <div className="mt-1 text-red-600">
-                            <small>{errors.description}</small>  Hiển thị thông báo lỗi
+                            <small>{errors.description}</small>
                         </div>
                     )}
                 </div>
@@ -182,6 +186,8 @@ export default function CreatePost({setAlertDataFunction}) {
                         </UploadImage>
                     </div>*/}
                     <UploadImage
+                        setAlertDataFunction={setAlertDataFunction}
+                        value={values.thumbnailImage}
                         placeholder="Upload thumbnail"
                         error={errors}
                         onChange={(value) => {
@@ -209,6 +215,7 @@ export default function CreatePost({setAlertDataFunction}) {
                 </div>
                 <div className="mb-5 custom-quill-editor">
                     <ReactQuill
+                        placeholder="Typing conent here..."
                         id="content"
                         value={values.content}
                         onChange={(value) => {
