@@ -52,6 +52,11 @@ export default function DefaultLayout({children}) {
         ]);
     };
 
+    const handleErrorFunction = (err) => {
+        const errorData = err.response.data;
+        setAlertDataFunction("error", errorData.message);
+    }
+
     const handleChangeSelectedPage = (page) => {
         setSelectedPage(page);
     }
@@ -61,7 +66,7 @@ export default function DefaultLayout({children}) {
             <Navbar {...settings} />
 
             <div>
-                {React.cloneElement(children, {setAlertDataFunction: setAlertDataFunction})}
+                {React.cloneElement(children, {setAlertDataFunction: setAlertDataFunction, handleErrorFunction: handleErrorFunction})}
             </div>
 
             <Footer {...settings} />

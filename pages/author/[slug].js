@@ -24,7 +24,14 @@ export default function Author({ settings }) {
             <ContainerPage>
                 <div className="flex flex-col items-center justify-center">
                     <div className="relative h-20 w-20 overflow-hidden rounded-full">
-                        <img src="https://static.vecteezy.com/system/resources/previews/027/245/487/non_2x/male-3d-avatar-free-png.png" alt="author.png" />
+                        <Image
+                            src={profile?.avatarUrl}
+                            alt={profile?.fullName}
+                            className="rounded-full object-cover"
+                            fill
+                            sizes="40px"
+                        />
+                        {/*<img src={profile.avatarUrl} alt="author.png" />*/}
                     </div>
                     <h1 className="text-brand-primary mt-2 text-3xl font-semibold tracking-tight dark:text-white lg:text-3xl lg:leading-tight">{profile?.fullName}</h1>
                 </div>

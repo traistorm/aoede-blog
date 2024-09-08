@@ -34,13 +34,3 @@ export const getProfile = async (profileId) => {
         throw error;
     }
 };
-
-export const createPost = async (post) => {
-    try {
-        const response = await axiosInstance.post('/api/post', post);
-        return response.data;
-    } catch (error) {
-        console.error('Error create post:', error);
-        throw error;
-    }
-};

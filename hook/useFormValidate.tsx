@@ -7,6 +7,8 @@ type Rule = {
     minLength?: number;
 
     maxLength?: number;
+
+    pattern?: any;
 };
 
 const useFormValidate = (initialData) => {
@@ -17,8 +19,6 @@ const useFormValidate = (initialData) => {
     const [isFirstFocus, setIsFirstFocus] = useState({});
 
     const validate = (name, value, rules) => {
-        console.log(name);
-        console.log(value);
         const newErrors = { ...errors };
         // Kiểm tra điều kiện required
         if (types[name] === "input-react-quill") {
@@ -45,6 +45,8 @@ const useFormValidate = (initialData) => {
                 newErrors[name] = `Must be at least ${rules.minLength} characters`;
             } else if (rules.maxLength && value.length > rules.maxLength) {
                 newErrors[name] = `Must be at most ${rules.maxLength} characters`;
+            } else if (rules.pattern?.value && !rules.pattern?.value.test(value)) {
+                newErrors[name] = rules.pattern.message;
             } else {
                 delete newErrors[name];
             }

@@ -6,11 +6,10 @@ import {useEffect, useState} from "react";
 import dynamic from 'next/dynamic';
 import 'react-quill/dist/quill.snow.css';
 import useFormValidate from "../hook/useFormValidate";
-import {createPost} from "../api/user.api";
 //import Select from 'react-select'
 import Dropdown from "../components/ui/dropdown";
 import {useTheme} from "next-themes";
-import {getCategoryCombobox} from "../api/blogs.api";
+import {createPost, getCategoryCombobox} from "../api/blogs.api";
 import UploadImage from "../components/ui/upload-image";
 import {useRouter} from "next/router";
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
@@ -24,7 +23,7 @@ const initDataFrom = {
         thumbnailImage: ''
     },
     rules: {
-        title: { required: true, minLength: 20, maxLength: 100 },
+        title: { required: true, minLength: 20, maxLength: 100, pattern: {value: /^[a-zA-Z0-9]+$/, message: "The title field contains only letters and numbers"} },
         description: { required: true, minLength: 20, maxLength: 100 },
         content: { required: true, minLength: 100, maxLength: 2000 },
         categories: { required: true },
@@ -39,7 +38,7 @@ const initDataFrom = {
     },
 };
 
-export default function CreatePost({setAlertDataFunction}) {
+export default function CreatePost({setAlertDataFunction, handleErrorFunction}) {
     const router = useRouter();
     const [categoryOptions, setCategoryOptions] = useState([])
     const [selectedCategories, setSelectedCategories] = useState([]);
@@ -76,6 +75,7 @@ export default function CreatePost({setAlertDataFunction}) {
             setAlertDataFunction("createSuccess", "Post created successfully");
             router.push("/post/" + res.title.replace(/\s+/g, '-').toLowerCase())
         }, (err) => {
+            handleErrorFunction(err);
         })
     }
 
@@ -94,7 +94,7 @@ export default function CreatePost({setAlertDataFunction}) {
                         type="text"
                         placeholder="Title"
                         value={values.title}
-                        {...register('title', 'input', { required: true, minLength: 20, maxLength: 100 })}
+                        {...register('title', 'input', initDataFrom.rules.title)}
                         className={`w-full px-4 py-3 border-2 placeholder:text-gray-800 dark:text-white rounded-md outline-none dark:placeholder:text-gray-200 dark:bg-gray-900 focus:ring-4 ${
                             errors.title
                                 ? 'border-red-600 focus:border-red-600 ring-red-100 dark:ring-0'
@@ -189,7 +189,7 @@ export default function CreatePost({setAlertDataFunction}) {
                         setAlertDataFunction={setAlertDataFunction}
                         value={values.thumbnailImage}
                         placeholder="Upload thumbnail"
-                        error={errors}
+                        error={errors.thumbnailImage}
                         onChange={(value) => {
                             // Gọi onChange từ register
                             const event = {
