@@ -46,6 +46,16 @@ export default function App({ Component, pageProps }) {
     return (
         <ThemeProvider attribute="class" defaultTheme="light">
             <Provider store={store}>
+                <Head>
+                    <link rel="preconnect" href="https://fonts.googleapis.com" />
+                    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+                    <link
+                        href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap"
+                        rel="stylesheet"
+                    />
+                    <link href="https://fonts.googleapis.com/css2?family=Handjet:wght@100..900&family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet" />
+                    <link href="https://fonts.googleapis.com/css2?family=Jacques+Francois+Shadow&display=swap" rel="stylesheet" />
+                </Head>
                 {getLayout(<Component {...pageProps} />)}
             </Provider>
         </ThemeProvider>

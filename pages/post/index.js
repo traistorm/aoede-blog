@@ -50,12 +50,12 @@ export default function Post({}) {
     return (
         <>
             <Container className="relative">
-                <h1 className="text-center text-3xl font-semibold tracking-tight dark:text-white lg:text-4xl lg:leading-snug">
-                    Archive
+                <h1 className="playpen-sans-font text-center text-xl font-semibold tracking-tight dark:text-white lg:text-2xl lg:leading-snug">
+                    Tactics, skills and more...
                 </h1>
                 <div className="text-center">
-                    <p className="mt-2 text-lg">
-                        See all posts we have ever written.
+                    <p className="playpen-sans-font mt-2 text-lg">
+                        Read what you like here!
                     </p>
                 </div>
                 <Suspense
