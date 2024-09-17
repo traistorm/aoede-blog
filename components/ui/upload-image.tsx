@@ -14,9 +14,13 @@ interface UploadImageProps {
     onFocus?: () => void;
 
     setAlertDataFunction?: (type, message) => void;
+
+    setValues?: (prevValues) => void;
+
+    field?: string;
 }
 
-const UploadImage: React.FC<UploadImageProps> = ({error, onChange, onFocus, placeholder, value, setAlertDataFunction}) => {
+const UploadImage: React.FC<UploadImageProps> = ({error, onChange, onFocus, placeholder, setValues, field, setAlertDataFunction}) => {
     const [uploadingImage, setUploadingImage] = useState(false);
     const [preview, setPreview] = useState<string | null>(null);
     const [isHovered, setIsHovered] = useState(false);
@@ -46,6 +50,10 @@ const UploadImage: React.FC<UploadImageProps> = ({error, onChange, onFocus, plac
                 reader.readAsDataURL(file);
                 setUploadingImage(false);
                 setAlertDataFunction("success", "Image upload successful");
+                setValues((prevValues) => ({
+                    ...prevValues, // giữ nguyên các trường khác
+                    [field]: res // thay đổi giá trị của field được truyền vào
+                }));
             }, (err) => {
                 if (onChange) {
                     onChange(null);

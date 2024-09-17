@@ -8,8 +8,10 @@ import { myLoader } from "../utils/all";
 import Container from "./container";
 import {Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button} from "@nextui-org/react";
 import {useSelector} from "react-redux";
+import {useTranslation} from "react-i18next";
 
 export default function Navbar(props) {
+  const { t, i18n } = useTranslation('success');
   const user = useSelector(state => state.user);
   const leftmenu = [
     {
@@ -37,6 +39,7 @@ export default function Navbar(props) {
       children: [
         { title: user?.fullName, path: `/author/${user?.id}` },
         ...(user?.isAdmin ? [{ title: 'Create post', path: `/create-post` }] : []),
+        { title: "switchLanguage", path: '' },
         { title: "Logout", path: "/" },
       ],
     },
@@ -55,6 +58,7 @@ export default function Navbar(props) {
 
   const mobilemenu = [...leftmenu, ...rightmenu];
 
+
   return (
     <Container>
       <nav>
@@ -71,6 +75,8 @@ export default function Navbar(props) {
                           key={`${item.label}${index}`}
                           items={item.children}
                           user={user}
+                          i18n={i18n}
+                          translation={t}
                         />
                       ) : (
                         <Link
@@ -139,6 +145,8 @@ export default function Navbar(props) {
                           key={`${item.label}${index}`}
                           items={item.children}
                           user={user}
+                          i18n={i18n}
+                          translation={t}
                         />
                       ) /*: item.label === 'Login' && user ? (
                           <Dropdown>
@@ -192,6 +200,8 @@ export default function Navbar(props) {
                           items={item.children}
                           mobile={true}
                           user={user}
+                          i18n={i18n}
+                          translation={t}
                         />
                       ) : item.label === 'Login' && user ? (
                           <Link
@@ -224,7 +234,7 @@ export default function Navbar(props) {
   );
 }
 
-const DropdownMenuCustom = ({ menu, items, mobile, user }) => {
+const DropdownMenuCustom = ({ menu, items, mobile, user, i18n, translation }) => {
   return (
       <>
         {
@@ -282,22 +292,73 @@ const DropdownMenuCustom = ({ menu, items, mobile, user }) => {
                                       !mobile && "bg-white shadow-lg  dark:bg-gray-800"
                                   )}>
                                 <div className={cx(!mobile && "py-3")}>
-                                  {items.map((item, index) => (
-                                      <Menu.Item as="div" key={`${item.title}${index}`}>
-                                        {({ active }) => (
-                                            <Link
-                                                href={item?.path ? item.path : "#"}
-                                                className={cx(
-                                                    "flex items-center space-x-2 px-5 py-2 text-base lg:space-x-4",
-                                                    active
-                                                        ? "text-blue-500"
-                                                        : "text-gray-700 hover:text-blue-500 focus:text-blue-500 dark:text-gray-300"
-                                                )}>
-                                              <span> {item.title}</span>
-                                            </Link>
-                                        )}
-                                      </Menu.Item>
-                                  ))}
+                                  {items.map((item, index) => {
+                                    return (
+                                        <>
+                                          {
+                                            item.title === 'switchLanguage' ? (
+                                              <Menu.Item as="div" key={`${item.title}${index}`}>
+                                                {({active}) => {
+                                                  return (
+                                                      <>
+                                                        {i18n.language === 'en' ? (
+                                                            <button
+                                                                className={cx(
+                                                                    "flex justify-items-start items-center px-5 py-2 text-base lg:space-x-1",
+                                                                    active
+                                                                        ? "text-blue-500"
+                                                                        : "text-gray-700 hover:text-blue-500 focus:text-blue-500 dark:text-gray-300"
+                                                                )}
+                                                                onClick={(e) => {
+                                                                  const newLang = i18n.language === 'en' ? 'vi' : 'en';
+                                                                  i18n.changeLanguage(newLang);
+                                                                }}
+                                                            >
+                                                              <Image src="/images/flags/uk.svg" alt="UK Flag" width={24} height={24} />
+                                                              <div>EN</div>
+                                                            </button>
+                                                        ) : (
+                                                            // Nếu ngôn ngữ hiện tại là tiếng Việt
+                                                            <button
+                                                                className={cx(
+                                                                    "flex items-center space-x-1 px-5 py-2 text-base lg:space-x-1",
+                                                                    active
+                                                                        ? "text-blue-500"
+                                                                        : "text-gray-700 hover:text-blue-500 focus:text-blue-500 dark:text-gray-300"
+                                                                )}
+                                                                onClick={(e) => {
+                                                                  const newLang = i18n.language === 'en' ? 'vi' : 'en';
+                                                                  i18n.changeLanguage(newLang);
+                                                                }}
+                                                            >
+                                                              <Image src="/images/flags/vn.svg" alt="VN Flag" width={24} height={24} />
+                                                              <div>VI</div>
+                                                            </button>
+                                                        )}
+                                                      </>
+                                                  )
+                                                }}
+                                              </Menu.Item>
+                                            ) : (
+                                                <Menu.Item as="div" key={`${item.title}${index}`}>
+                                                  {({active}) => (
+                                                      <Link
+                                                          href={item?.path ? item.path : "#"}
+                                                          className={cx(
+                                                              "flex items-center space-x-2 px-5 py-2 text-base lg:space-x-4",
+                                                              active
+                                                                  ? "text-blue-500"
+                                                                  : "text-gray-700 hover:text-blue-500 focus:text-blue-500 dark:text-gray-300"
+                                                          )}>
+                                                        <span> {item.title}</span>
+                                                      </Link>
+                                                  )}
+                                                </Menu.Item>
+                                            )
+                                          }
+                                        </>
+                                    )
+                                  })}
                                 </div>
                               </Menu.Items>
                           ) : (

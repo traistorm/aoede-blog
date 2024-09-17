@@ -19,11 +19,11 @@ export default function Footer(props) {
   return (
     <Container className="flex justify-between items-center mt-10 border-t border-gray-100 dark:border-gray-800">
         <div className="flex space-x-3">
-            <i className="bi bi-github text-2xl lg:text-3xl cursor-pointer"></i>
-            <i className="bi bi-youtube text-2xl lg:text-3xl cursor-pointer"></i>
-            <i className="bi bi-discord text-2xl lg:text-3xl cursor-pointer"></i>
+            <i className="bi bi-github text-xl lg:text-2xl cursor-pointer"></i>
+            <i className="bi bi-youtube text-xl lg:text-2xl cursor-pointer"></i>
+            <i className="bi bi-discord text-xl lg:text-2xl cursor-pointer"></i>
         </div>
-        <div className="text-center text-xl lg:text-2xl font-bold jacques-francois-shadow-regular-font">
+        <div className="text-center text-base lg:text-xl font-bold jacques-francois-shadow-regular-font">
         {/*Copyright © {new Date().getFullYear()} {props?.copyright}. All
         rights reserved.*/}
             AOE DE DM
@@ -41,7 +41,7 @@ export default function Footer(props) {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="#ff6a00"
-                    className="size-8 cursor-pointer sun-icon"
+                    className="size-6 cursor-pointer sun-icon"
                 >
                     <path
                         strokeLinecap="round"
@@ -57,7 +57,7 @@ export default function Footer(props) {
                     viewBox="0 0 24 24"
                     strokeWidth="1.5"
                     stroke="#00bfff"
-                    className="size-8 cursor-pointer moon-icon"
+                    className="size-6 cursor-pointer moon-icon"
                 >
                     <path
                         strokeLinecap="round"

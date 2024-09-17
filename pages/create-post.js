@@ -69,7 +69,7 @@ export default function CreatePost({setAlertDataFunction, handleErrorFunction}) 
             title: values.title,
             content: values.content,
             categoryIds: category_ids,
-            thumbnailImageUrl: values.thumbnailImage
+            thumbnailImageUrl: values.thumbnailImageUrl
         }
         createPost(postData).then((res) => {
             setAlertDataFunction("createSuccess", "Post created successfully");
@@ -190,6 +190,9 @@ export default function CreatePost({setAlertDataFunction, handleErrorFunction}) 
                         value={values.thumbnailImage}
                         placeholder="Upload thumbnail"
                         error={errors.thumbnailImage}
+                        field={"thumbnailImageUrl"}
+                        setValues={setValues}
+                        error={errors}
                         onChange={(value) => {
                             // Gọi onChange từ register
                             const event = {
