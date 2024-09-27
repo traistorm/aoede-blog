@@ -60,16 +60,15 @@ export default function DefaultLayout({children}) {
     const handleChangeSelectedPage = (page) => {
         setSelectedPage(page);
     }
-    const settings = [];
     return (
         <>
-            <Navbar {...settings} />
+            <Navbar />
 
             <div>
                 {React.cloneElement(children, {setAlertDataFunction: setAlertDataFunction, handleErrorFunction: handleErrorFunction})}
             </div>
 
-            <Footer {...settings} />
+            <Footer />
             <Stack className="fixed" sx={{top: "10px", right: "10px", zIndex: 1000000, width: "400px"}} spacing={2}>
                 {alertData.map(alert => {
                     return (
