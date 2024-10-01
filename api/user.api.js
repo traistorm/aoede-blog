@@ -14,6 +14,20 @@ export const login = async (username, password) => {
     );
 };
 
+export const signUp = async (username, password) => {
+    let signUpDTO = {
+        username: username,
+        password: password
+    }
+    try {
+        const response = await axiosInstance.post('/api/user/sign-up', signUpDTO);
+        return response.data;
+    } catch (error) {
+        console.error('Error create post:', error);
+        throw error;
+    }
+};
+
 export const checkLogin = async (token) => {
     const host = process.env.NEXT_PUBLIC_API_HOST;
     return axios.post(

@@ -18,6 +18,7 @@ i18n
         backend: {
             loadPath: '/locales/{{lng}}/{{ns}}.json', // Đường dẫn tới các tệp dịch
         },
+        defaultNS: 'translation', // Namespace mặc định
     });
 
 export default i18n;

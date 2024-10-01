@@ -1,17 +1,19 @@
 import {useEffect, useState} from "react";
 import styles from "./login.module.scss";
 import classNames from "classnames/bind";
-import {checkLogin, login} from "../api/user.api";
+import {checkLogin, login, signUp} from "../api/user.api";
 import {useRouter} from "next/router";
 import {useDispatch, useSelector} from "react-redux";
 import {setUser} from "../redux/action";
 import DefaultLayout from "../layout/defaultlayout/default.layout";
 import Home from "./index";
 import NoLayout from "../layout/nolayout/no.layout";
+import {useTranslation} from "react-i18next";
 const cx = classNames.bind(styles)
 
-export default function Login() {
+export default function Login({setAlertDataFunction, handleErrorFunction}) {
     //const { user, loading } = useUser();
+    const { t } = useTranslation();
     const router = useRouter();
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
@@ -59,6 +61,14 @@ export default function Login() {
             router.push("/");
         }, (err) => {
 
+        })
+    }
+
+    const onSignUp = () => {
+        signUp(username, password).then((res) => {
+
+        }, (err) => {
+            handleErrorFunction(err.response.data)
         })
     }
     return (
@@ -149,8 +159,8 @@ export default function Login() {
                                     and more.</p>
 
                                 <div className="flex flex-col gap-4">
-                                    <input className="p-2 mt-8 rounded-xl border" type="email" name="email"
-                                           placeholder="Email"/>
+                                    <input className="p-2 mt-8 rounded-xl border" type="text" name="username"
+                                           placeholder="Username"/>
                                     <div className="relative">
                                         <input
                                             className="p-2 rounded-xl border w-full"
@@ -237,7 +247,9 @@ export default function Login() {
                                             />
                                         </svg>
                                     </div>
+                                    <div className="text-red-600">{t(`SignUp.PasswordNotMatch`)}</div>
                                     <button
+                                        onClick={onSignUp}
                                         className="bg-[#002D74] text-white py-2 rounded-xl hover:scale-105 duration-300 hover:bg-[#206ab1] font-medium"
                                         type="submit">Sign up
                                     </button>

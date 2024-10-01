@@ -83,7 +83,7 @@ export default function CreatePost({setAlertDataFunction, handleErrorFunction}) 
         <Container>
             <ContainerPage>
                 <div className="text-center mb-5">
-                    <p className="text-lg">Create your post here!</p>
+                    <p className="playpen-sans-font text-center text-xl font-semibold tracking-tight dark:text-white lg:text-2xl lg:leading-snug">Create your post here!</p>
                 </div>
                 <div className="mb-5">
                     <label htmlFor="email_address" className="sr-only">

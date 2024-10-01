@@ -10,6 +10,7 @@ import {checkLogin} from "../../api/user.api";
 import {setUser} from "../../redux/action";
 import {useDispatch} from "react-redux";
 import {Alert, Stack} from "@mui/material";
+import {useTranslation} from "react-i18next";
 const cx = classNames.bind(styles)
 
 export default function DefaultLayout({children}) {
@@ -19,6 +20,7 @@ export default function DefaultLayout({children}) {
     const dispatch = useDispatch();
     const router = useRouter();
     const { pathname } = router;
+    const { t } = useTranslation();
     useEffect(() => {
         if (pathname.includes('/home') || pathname === "/") {
             setSelectedPage("home");
@@ -53,8 +55,12 @@ export default function DefaultLayout({children}) {
     };
 
     const handleErrorFunction = (err) => {
-        const errorData = err.response.data;
-        setAlertDataFunction("error", errorData.message);
+        const errorMessage = t(`${err.entityName}.${err.errorKey}`);
+        if (errorMessage) {
+            setAlertDataFunction("error", errorMessage);
+        } else {
+            setAlertDataFunction("error", err.errorKey);
+        }
     }
 
     const handleChangeSelectedPage = (page) => {

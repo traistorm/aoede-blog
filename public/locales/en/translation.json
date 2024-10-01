@@ -1,3 +1,5 @@
 {
-
+  "SignUp": {
+    "PasswordNotMatch": "Passwords do not match"
+  }
 }

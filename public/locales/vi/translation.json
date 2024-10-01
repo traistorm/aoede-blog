@@ -1,3 +1,5 @@
 {
-
+  "SignUp": {
+    "PasswordNotMatch": "Mật khẩu không khớp"
+  }
 }
